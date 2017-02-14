@@ -1,0 +1,34 @@
+version: '2'
+
+services:
+  frontend:
+    depends_on:
+      - backend
+    build: ./frontend
+    command: npm run dev
+    volumes:
+      - ./frontend/src:/project/src
+    ports:
+      - "8080:8080"
+    networks:
+      - net-tier
+  db:
+    image: postgres
+    networks:
+      - net-tier
+
+  backend:
+    depends_on:
+      - db
+    build: ./backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/project
+    ports:
+      - "8000:8000"
+    networks:
+      - net-tier
+
+networks:
+  net-tier:
+    driver: bridge
